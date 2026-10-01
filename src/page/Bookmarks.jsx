@@ -108,7 +108,7 @@ export default function Bookmarks() {
                   <button
                     className="justify-center w-24 border rounded-xl border-gray-600 text-black dark:text-white hover:border-red-500 hover:text-red-500"
                     onClick={() =>
-                      AddBookmark({ userId: user._id, PostId: b })
+                      AddBookmark({ userId: user._id, postId: b })
                     }
                   >
                     Delete Bookmark
@@ -117,7 +117,7 @@ export default function Bookmarks() {
               </div>
             </>
           ) : (
-            <PostsAndReplay key={b._id} post={b} />
+            <PostsAndReplay key={b._id} post={b} isBookmark = {true} />
           ),
         )
       ) : (

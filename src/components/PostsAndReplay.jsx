@@ -5,27 +5,31 @@ import { FiTrash2 } from "react-icons/fi";
 import { BsThreeDots } from "react-icons/bs";
 import { useUser } from "./UserContext";
 import Loading from "./Loading";
-import { PostProfile,PostImage, ActionBtn } from "./Posts";
+import { PostProfile, PostImage, ActionBtn } from "./Posts";
 
-export default function PostsAndReplay({ post }) {
-  
-  
-  const { user, GetUserById } = useUser();
+export default function PostsAndReplay({ post, isBookmark }) {
+  const { user, GetUserById, AddBookmark } = useUser();
   const { deleteMutation } = usePosts();
   const [PostMenu, setPostMenu] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
 
   const { data: postUser = [] } = GetUserById(post?.postedBy);
-
   const handleDelete = () => {
-    deleteMutation.mutateAsync(post?._id);
+    if (isBookmark) {
+      AddBookmark({ userId: user._id, postId: post._id });
+      deleteMutation.mutateAsync(post?._id);
+    }else{
+      deleteMutation.mutateAsync(post?._id);
+    }
   };
   const profileAction = (value, id) => {
-    value+id
+    value + id;
   };
 
   return (
     <>
+      {/* menu button */}
+
       <div className="custom-border pt-2">
         <div className="flex gap-3">
           <div className="shrink-0"></div>
@@ -114,9 +118,7 @@ export default function PostsAndReplay({ post }) {
                   <ul className="mt-2 rounded-lg ">
                     <li className="dropdown-item inline-flex ">
                       <button
-                        onClick={() =>
-                          profileAction("Unfollow", postUser?._id)
-                        }
+                        onClick={() => profileAction("Unfollow", postUser?._id)}
                         className="p-3 inline-flex hover:bg-slate-700 w-full font-bold"
                       >
                         <FiTrash2 className="mr-3 text-xl" /> Unfollow @
@@ -125,9 +127,7 @@ export default function PostsAndReplay({ post }) {
                     </li>
                     <li className="dropdown-item">
                       <button
-                        onClick={() =>
-                          profileAction("Unfollow", postUser?._id)
-                        }
+                        onClick={() => profileAction("Unfollow", postUser?._id)}
                         className="p-3 inline-flex hover:bg-slate-700 w-full font-bold"
                       >
                         <FiTrash2 className="mr-3 text-xl" />
@@ -185,7 +185,11 @@ export default function PostsAndReplay({ post }) {
             )}
             {/* Action buttons */}
             <div className="ml-12">
-            <ActionBtn key={post?.replayId} posts={post} postUserID={postUser._id}/>
+              <ActionBtn
+                key={post?.replayId}
+                posts={post}
+                postUserID={postUser._id}
+              />
             </div>
           </div>
         </div>
@@ -240,7 +244,7 @@ export function Replay({ Replay }) {
       <div className=" border-gray-800 border rounded-xl p-4 m-4 ml-12">
         <div className="flex align-top">
           <PostProfile key={posts._id} post={posts} />
-          
+
           {/* Post content */}
         </div>
         <div className="">
@@ -251,9 +255,7 @@ export function Replay({ Replay }) {
           </Link>
           {!Replay.imagePath && (
             <div>
-              {posts.imagePath && (
-                <PostImage key={posts._id} posts={posts} />
-              )}
+              {posts.imagePath && <PostImage key={posts._id} posts={posts} />}
             </div>
           )}
         </div>
