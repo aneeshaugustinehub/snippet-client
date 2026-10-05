@@ -30,7 +30,7 @@ export default function JoinToday() {
       const err = await Login(user_id, password);
       if (err) {
         setLoginErr("invalid login credentials");
-      }
+      }else
       window.location.reload();
     }
   };

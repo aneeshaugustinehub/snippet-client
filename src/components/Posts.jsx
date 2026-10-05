@@ -64,6 +64,8 @@ export function ActionBtn({ posts }) {
   const { user, AddBookmark } = useUser();
   const [RepostPopUp, setRepostPopUp] = useState(false);
   const onLike = (id) => {
+    console.log(id);
+    
   };
   const onClickBookmark = (postId) => {
     AddBookmark({ userId: user._id, postId: postId });
@@ -170,6 +172,8 @@ export default function Posts({ post }) {
     deleteMutation.mutateAsync(post?._id);
   };
   const profileAction = (value, id) => {
+    console.log(value,id);
+    
   };
 
   return (
