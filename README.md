@@ -2,7 +2,7 @@
 
 A full-stack microblogging platform built with the MERN stack: post, like, bookmark, follow, and share images in a fast, responsive single-page app.
 
-[**Live Demo**](#) · [**Backend Repo**](#) · [**Report a Bug**](https://github.com/aneeshaugustinehub/snippet-client/issues)
+[**Live Demo**](#) · [**Backend Repo**](https://github.com/aneeshaugustinehub/snippet-server) · [**Report a Bug**](https://github.com/aneeshaugustinehub/snippet-client/issues)
 
 <!-- Replace (#) above with your deployed URL and server repo URL -->
 
@@ -14,7 +14,7 @@ A full-stack microblogging platform built with the MERN stack: post, like, bookm
 ## Features
 
 - **Authentication:** JWT-based sign up / login with bcrypt-hashed passwords and protected routes
-- **Tweets:** create, read, update, and delete posts, with image uploads
+- **Posts:** create, read, update, and delete posts, with image uploads
 - **Engagement:** like and bookmark posts, with instant UI updates
 - **Social graph:** follow / unfollow users and browse user profiles
 - **Relative timestamps:** compact "2h" / "3d" style times via a centralized `moment` locale config
@@ -33,7 +33,7 @@ A full-stack microblogging platform built with the MERN stack: post, like, bookm
 
 ## Engineering Highlights
 
-**Server state with TanStack Query.** All data fetching goes through `useQuery`, `useMutation`, and `useQueries` instead of hand-rolled `useEffect`/`useState`. Consistent query keys (`["tweets"]`, `["tweet", id]`) make cache invalidation predictable, and `useQueries` fetches related data in parallel rather than in a waterfall.
+**Server state with TanStack Query.** All data fetching goes through `useQuery`, `useMutation`, and `useQueries` instead of hand-rolled `useEffect`/`useState`. Consistent query keys (`["posts"]`, `["post", id]`) make cache invalidation predictable, and `useQueries` fetches related data in parallel rather than in a waterfall.
 
 **Efficient relationship modeling.** Likes, bookmarks, and follows are stored as array fields in Mongoose schemas and updated atomically with `$addToSet`, which keeps lookups simple and avoids extra joins at this scale.
 
@@ -53,7 +53,7 @@ React (Vite) ──Axios──▶ Vite proxy ──▶ Express API ──Mongoos
 src/
 ├── components/   # Reusable UI
 ├── pages/        # Route-level views
-├── context/      # Auth and tweets providers
+├── context/      # Auth and posts providers
 └── ...
 ```
 <!-- Adjust the folder tree to match your actual src/ structure. -->
