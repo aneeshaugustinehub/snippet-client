@@ -19,55 +19,33 @@ export const UserProvider = ({ children }) => {
       const res = await axios.get(USER_URL);
       return res.data;
     },
+    retry: false,
   });
-
-  // useEffect(() => {
-  //   const fetchUsers = async () => {
-  //     try {
-  //       const res = await axios.get(USER_URL);
-  //       setUsers(res.data);
-  //     } catch (error) {
-  //     }
-  //   };
-  //   fetchUsers();
-  // }, [USER_URL]);
-
-  // useEffect(() => {
-  //   const fetchUser = async () => {
-  //     try {
-  //       const localUser = JSON.parse(localStorage.getItem("user"));
-  //       if (localUser) {
-  //         const res = await axios.get(USER_URL + localUser.userId);
-  //         setUser(res.data);
-  //       }
-  //     } catch (error) {
-  //     }
-  //   };
-  //   fetchUser();
-  // }, [USER_URL]);
-
-  const localUser = JSON.parse(localStorage.getItem("user"));
+  const token = localStorage.getItem("token");
   const {
     data: user,
     isLoading: userIsLoading,
     error: userError,
   } = useQuery({
-    queryKey: ["user", localUser],
+    queryKey: ["user"],
+    enabled: !!token,
+    retry: false,
+
     queryFn: async () => {
-      const res = await axios.get(USER_URL + localUser.userId);
-      return res.data;
+      try {
+        const res = await axios.get(USER_URL + "getMe", {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        return res.data.user;
+      } catch (err) {
+        if (err.response?.status === 401) {
+          localStorage.removeItem("token"); // expired or invalid token
+        }
+        throw err;
+      }
     },
   });
 
-  // const GetUserById = async (id) => {
-  //   try {
-  //     if (id) {
-  //       const res = await axios.get(USER_ID_URL + id);
-  //       return (res.data);
-  //     }
-  //   } catch (error) {
-  //   }
-  // };
   const GetUserByUsername = (username) => {
     return useQuery({
       queryKey: ["userByUsername", username],
@@ -75,7 +53,6 @@ export const UserProvider = ({ children }) => {
         const res = await axios.get(USER_URL + username);
         return res.data;
       },
-      retry: false,
     });
   };
 
@@ -120,57 +97,55 @@ export const UserProvider = ({ children }) => {
   };
 
   const Signup = async (email, name, userId, password, birthday) => {
+    console.log("sign up start");
+    
     if (!email.trim() || !name || !userId || !password || !birthday) return;
+    if (password.length < 8) {
+      return "Password must be at least 8 characters";
+    }
     try {
-      const response = await axios.post(USER_URL, {
+      const res = await axios.post(USER_URL + "register", {
         email: email,
         name: name,
         userId: userId,
-        token: password,
+        password: password,
         dob: birthday,
+        withCredentials: true,
       });
-      localStorage.setItem("user", JSON.stringify(response.data.newUser));
+      console.log("Signup", res.data.token);
+      localStorage.setItem("token", res.data.token);
+      queryClient.setQueryData(["user"], res.data.user);
+      return res.data;
+
     } catch (error) {
-      return error;
+      if (error) {
+        console.log(error.message, "signup error");
+
+        return "signup error";
+      }
     }
   };
 
-  const Login = async (userid, password) => {
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  const Login = async (userId, password) => {
     try {
-      const stored = await axios.get(USER_URL + userid);
-      const isEmail = emailRegex.test(userid);
-      const match = isEmail
-        ? stored.data.mail === userid
-        : stored.data.userId === userid;
-      if (match && stored.data.token === password) {
-        const updated = { ...stored.data, token: password };
-        localStorage.setItem("user", JSON.stringify(updated));
-      } else {
-        return ("Invalid credentials");
-      }
+      const res = await axios.post(USER_URL + "login", { userId, password });
+      console.log("login", res.data.token);
+      localStorage.setItem("token", res.data.token);
+      return { success: true };
     } catch (error) {
-      return error;
+      console.error("Login error:", error); // shows the real cause
+      return {
+        success: false,
+        message: error.response?.data?.message || "Login failed",
+      };
     }
   };
 
   const logout = () => {
-    localStorage.removeItem("user");
+    localStorage.removeItem("token");
+    // setUser(null);
   };
 
-  //   const { mutate: CreatePost } = useMutation({
-  //   mutationFn: async ({ Description, postImage }) => {
-  //     const formData = new FormData();
-  //     formData.append("Description", Description);
-  //     formData.append("postImage", postImage);
-  //     await axios.post(POST_URL + user._id, formData);
-  //   },
-  //   onSuccess: () => {
-  //     queryClient.invalidateQueries({
-  //       queryKey: ["posts"],
-  //     });
-  //   },
-  // });
   const { mutate: AddBookmark } = useMutation({
     mutationFn: async ({ userId, postId }) => {
       await axios.put(USER_URL + "bookmark/" + userId, { postId });
@@ -204,3 +179,52 @@ export const UserProvider = ({ children }) => {
     </UserContext.Provider>
   );
 };
+
+// useEffect(() => {
+//   const fetchUsers = async () => {
+//     try {
+//       const res = await axios.get(USER_URL);
+//       setUsers(res.data);
+//     } catch (error) {
+//     }
+//   };
+//   fetchUsers();
+// }, [USER_URL]);
+
+// useEffect(() => {
+//   const fetchUser = async () => {
+//     try {
+//       const localUser = JSON.parse(localStorage.getItem("user"));
+//       if (localUser) {
+//         const res = await axios.get(USER_URL + localUser.userId);
+//         setUser(res.data);
+//       }
+//     } catch (error) {
+//     }
+//   };
+//   fetchUser();
+// }, [USER_URL]);
+
+// const GetUserById = async (id) => {
+//   try {
+//     if (id) {
+//       const res = await axios.get(USER_ID_URL + id);
+//       return (res.data);
+//     }
+//   } catch (error) {
+//   }
+// };
+
+//   const { mutate: CreatePost } = useMutation({
+//   mutationFn: async ({ Description, postImage }) => {
+//     const formData = new FormData();
+//     formData.append("Description", Description);
+//     formData.append("postImage", postImage);
+//     await axios.post(POST_URL + user._id, formData);
+//   },
+//   onSuccess: () => {
+//     queryClient.invalidateQueries({
+//       queryKey: ["posts"],
+//     });
+//   },
+// });

@@ -14,24 +14,33 @@ export default function JoinToday() {
   const [Email, setEmail] = useState("");
   const { Login, Signup } = useUser();
 
-  const handleSignup = () => {
+  const handleSignup = async () => {
     if (!user_id || !password || !Fullname) {
       setLoginErr("Please fill out this field.");
       return;
     }
-    Signup(Email, Fullname, user_id, password, birthday);
-    setSignupPopup(false);
+    if (password.length < 8) {
+      setLoginErr("Password must be at least 8 characters");
+
+      return "Password must be at least 8 characters";
+    }
+
+    const res = await Signup(Email, Fullname, user_id, password, birthday);
+    if (!res.signup) {
+      setSignupPopup(false);
+    }
+    else window.location.reload();
   };
 
   const handleLogin = async () => {
     if (!user_id || !password) {
       setLoginErr("Please fill out this field.");
     } else {
-      const err = await Login(user_id, password);
-      if (err) {
+      const res = await Login(user_id, password);
+      if (!res.success) {
         setLoginErr("invalid login credentials");
-      }else
-      window.location.reload();
+      } else window.location.reload();
+      return;
     }
   };
 
@@ -40,8 +49,7 @@ export default function JoinToday() {
       <div className="flex flex-col">
         <section className="grid lg:grid-cols-2 grid-cols-1 mt-20 ">
           <div className="flex flex-col  justify-center items-center lg:my-0 my-10 lg:order-2">
-            <IoLogoOctocat className="text-[400px]">
-            </IoLogoOctocat>
+            <IoLogoOctocat className="text-[400px]"></IoLogoOctocat>
 
             {/* <img alt="" className="lg:h-[400px] h-24" /> */}
           </div>

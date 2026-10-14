@@ -14,7 +14,7 @@ export default function Bookmarks() {
   
 
   const bookmarkQueries = useQueries({
-    queries: user.bookmarks.map((id) => ({
+    queries: user?.bookmarks?.map((id) => ({
       queryKey: ["bookmarkPost", id],
       queryFn: async () => {
         const res = await axios.get(`${BASE_URL}Posts/${id}`);
@@ -27,7 +27,7 @@ export default function Bookmarks() {
     })),
   });
 
-  const isLoading = bookmarkQueries.some((q) => q.isLoading);
+  const isLoading = bookmarkQueries?.some((q) => q.isLoading);
   const bookmarkPosts = bookmarkQueries
     .filter((q) => q.isSuccess)
     .map((q) => q.data);

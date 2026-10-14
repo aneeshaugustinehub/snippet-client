@@ -4,7 +4,7 @@ import JoinToday from "../page/JoinToday";
 
 export default function ProtectedRoute({ children }) {
   const { user, userError, userIsLoading } = useUser();
-  const isLoggedIn = !!user?.token;
+  const isLoggedIn = !!user;
   if (userIsLoading) {
 
     return (
