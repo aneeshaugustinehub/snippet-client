@@ -30,6 +30,9 @@ export default function FullView() {
   const { data: replay = [] } = useGetReplay(id);
   const { data: postUser = [] } = GetUserById(posts.postedBy);
 
+  // console.log(replay,id,"post use and replay id");
+  
+
   const ImagePreviewHandle = (e) => {
     const file = e.target.files[0];
     const url = URL.createObjectURL(file);

@@ -9,7 +9,7 @@ const POST_REPLAY_URL = BASE_URL + "posts/replay/";
 
 export const PostsProvider = ({ children }) => {
   const { user } = useUser();
-  
+
   const queryClient = useQueryClient();
 
   const {
@@ -19,7 +19,7 @@ export const PostsProvider = ({ children }) => {
   } = useQuery({
     queryKey: ["posts"],
     queryFn: async () => {
-      const res = await axios.get(POST_URL);      
+      const res = await axios.get(POST_URL);
       return res.data?.posts;
     },
     enabled: true,
@@ -58,10 +58,18 @@ export const PostsProvider = ({ children }) => {
   };
 
   const useGetReplay = (id) => {
+    // console.log(id);
+    
     return useQuery({
       queryKey: ["Replay", id],
       queryFn: async () => {
-        const res = await axios.get(POST_REPLAY_URL + id);
+        const res = await axios.get(POST_REPLAY_URL+id, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "multipart/form-data",
+          },
+        });
+        // console.log(res.data.posts);
         return res.data.posts;
       },
     });
@@ -85,12 +93,19 @@ export const PostsProvider = ({ children }) => {
   //   }
   // };
 
+  const token = localStorage.getItem("token");
+
   const { mutate: CreatePost } = useMutation({
     mutationFn: async ({ Description, PostImage }) => {
       const formData = new FormData();
       formData.append("Description", Description);
       formData.append("PostImage", PostImage);
-      await axios.post(POST_URL + user._id, formData);
+      await axios.post(POST_URL, formData, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "multipart/form-data",
+        },
+      });
     },
     onSuccess: () => {
       queryClient.invalidateQueries({
@@ -101,13 +116,17 @@ export const PostsProvider = ({ children }) => {
 
   const { mutate: CreateReplay } = useMutation({
     mutationFn: async ({ postId, ReplayText, ReplayImage }) => {
-
       const formData = new FormData();
       formData.append("postedBy", user._id);
       formData.append("replayText", ReplayText);
       formData.append("PostImage", ReplayImage);
 
-      await axios.post(POST_REPLAY_URL + postId, formData);
+      await axios.post(POST_REPLAY_URL + postId, formData,{
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "multipart/form-data",
+        },
+      });
     },
     onSuccess: () => {
       queryClient.invalidateQueries({
@@ -116,9 +135,14 @@ export const PostsProvider = ({ children }) => {
     },
   });
 
-  const deleteMutation = useMutation({
+  const deletePost = useMutation({
     mutationFn: async (id) => {
-      await axios.delete(POST_URL + id);
+      await axios.delete(POST_URL + id,{
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "multipart/form-data",
+        },
+      });
     },
     onSuccess: async () => {
       queryClient.invalidateQueries({ queryKey: ["posts"] });
@@ -130,7 +154,7 @@ export const PostsProvider = ({ children }) => {
     <PostsContext.Provider
       value={{
         PostItems,
-        deleteMutation,
+        deletePost,
         isPostItemsLoading,
         errorPostItems,
         useGetReplay,

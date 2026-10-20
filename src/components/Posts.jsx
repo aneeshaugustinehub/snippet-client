@@ -162,14 +162,14 @@ export function ReplayPopup() {
 
 export default function Posts({ post }) {
   const { user, GetUserById } = useUser();
-  const { deleteMutation } = usePosts();
+  const { deletePost } = usePosts();
   const [PostMenu, setPostMenu] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
 
   const { data: postUser = [] } = GetUserById(post?.postedBy);
 
   const handleDelete = () => {
-    deleteMutation.mutateAsync(post?._id);
+    deletePost.mutateAsync(post?._id);
   };
   const profileAction = (value, id) => {
     console.log(value,id);

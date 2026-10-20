@@ -29,7 +29,6 @@ export const UserProvider = ({ children }) => {
   } = useQuery({
     queryKey: ["user"],
     enabled: !!token,
-    retry: false,
 
     queryFn: async () => {
       try {
@@ -57,6 +56,8 @@ export const UserProvider = ({ children }) => {
   };
 
   const GetUserById = (id) => {
+    // console.log(id);
+    
     return useQuery({
       queryKey: ["GetUserById", id],
       queryFn: async () => {
@@ -79,26 +80,33 @@ export const UserProvider = ({ children }) => {
     const formData = new FormData();
     formData.append("userId", userId);
     formData.append("name", name);
-    formData.append("bio", bio);
-    formData.append("location", location);
-    formData.append("website", website);
+    formData.append("bio", bio ?? "");
+    formData.append("location", location ?? "");
+    formData.append("website", website ?? "");
     formData.append("dob", dob);
 
     if (profilePic) formData.append("profilePic", profilePic);
     if (bannerPic) formData.append("bannerPic", bannerPic);
 
     try {
-      await axios.put(USER_URL + user._id, formData, {
-        headers: { "Content-Type": "multipart/formdata" },
+      await axios.put(USER_URL, formData, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
       });
     } catch (error) {
-      console.error("EditUserProfile error", error);
+      if (error.code === 409) {
+        let userExcited = true;
+        return userExcited;
+      }
+      console.error("EditUserProfile error", error.code);
     }
   };
 
   const Signup = async (email, name, userId, password, birthday) => {
     console.log("sign up start");
-    
+
     if (!email.trim() || !name || !userId || !password || !birthday) return;
     if (password.length < 8) {
       return "Password must be at least 8 characters";
@@ -116,7 +124,6 @@ export const UserProvider = ({ children }) => {
       localStorage.setItem("token", res.data.token);
       queryClient.setQueryData(["user"], res.data.user);
       return res.data;
-
     } catch (error) {
       if (error) {
         console.log(error.message, "signup error");
@@ -147,8 +154,13 @@ export const UserProvider = ({ children }) => {
   };
 
   const { mutate: AddBookmark } = useMutation({
-    mutationFn: async ({ userId, postId }) => {
-      await axios.put(USER_URL + "bookmark/" + userId, { postId });
+    mutationFn: async ({postId }) => {
+      await axios.put(USER_URL + "bookmark/",{ postId },{
+        headers:{
+          Authorization:`Bearer ${token}`,
+          "Content-Type": "application/json",
+        }
+      });
     },
     onSuccess: () => {
       queryClient.invalidateQueries({

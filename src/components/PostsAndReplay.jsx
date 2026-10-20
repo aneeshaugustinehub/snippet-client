@@ -9,17 +9,18 @@ import { PostProfile, PostImage, ActionBtn } from "./Posts";
 
 export default function PostsAndReplay({ post, isBookmark }) {
   const { user, GetUserById, AddBookmark } = useUser();
-  const { deleteMutation } = usePosts();
+  const { deletePost } = usePosts();
   const [PostMenu, setPostMenu] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
 
   const { data: postUser = [] } = GetUserById(post?.postedBy);
+  
   const handleDelete = () => {
     if (isBookmark) {
       AddBookmark({ userId: user._id, postId: post._id });
-      deleteMutation.mutateAsync(post?._id);
+      deletePost.mutateAsync(post?._id);
     }else{
-      deleteMutation.mutateAsync(post?._id);
+      deletePost.mutateAsync(post?._id);
     }
   };
   const profileAction = (value, id) => {
@@ -42,7 +43,7 @@ export default function PostsAndReplay({ post, isBookmark }) {
                 closedby="any"
                 className={`color dark:bg-gray-900 bg-gray-200  m-auto rounded-lg flex`}
               >
-                {postUser?._id === user._id ? (
+                {postUser?._id? (
                   <ul className="rounded-lg">
                     <li className="dropdown-item inline-flex ">
                       <button
