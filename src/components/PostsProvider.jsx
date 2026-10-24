@@ -6,11 +6,12 @@ import { useUser } from "./UserContext";
 const BASE_URL = import.meta.env.VITE_BASE_URL;
 const POST_URL = BASE_URL + "posts/";
 const POST_REPLAY_URL = BASE_URL + "posts/replay/";
+const POST_LIKE_URL = BASE_URL + "posts/like/";
 
 export const PostsProvider = ({ children }) => {
   const { user } = useUser();
-
   const queryClient = useQueryClient();
+  const token = localStorage.getItem("token");
 
   const {
     data: PostItems = [],
@@ -59,11 +60,10 @@ export const PostsProvider = ({ children }) => {
 
   const useGetReplay = (id) => {
     // console.log(id);
-    
     return useQuery({
       queryKey: ["Replay", id],
       queryFn: async () => {
-        const res = await axios.get(POST_REPLAY_URL+id, {
+        const res = await axios.get(POST_REPLAY_URL + id, {
           headers: {
             Authorization: `Bearer ${token}`,
             "Content-Type": "multipart/form-data",
@@ -93,8 +93,6 @@ export const PostsProvider = ({ children }) => {
   //   }
   // };
 
-  const token = localStorage.getItem("token");
-
   const { mutate: CreatePost } = useMutation({
     mutationFn: async ({ Description, PostImage }) => {
       const formData = new FormData();
@@ -121,7 +119,7 @@ export const PostsProvider = ({ children }) => {
       formData.append("replayText", ReplayText);
       formData.append("PostImage", ReplayImage);
 
-      await axios.post(POST_REPLAY_URL + postId, formData,{
+      await axios.post(POST_REPLAY_URL + postId, formData, {
         headers: {
           Authorization: `Bearer ${token}`,
           "Content-Type": "multipart/form-data",
@@ -137,7 +135,7 @@ export const PostsProvider = ({ children }) => {
 
   const deletePost = useMutation({
     mutationFn: async (id) => {
-      await axios.delete(POST_URL + id,{
+      await axios.delete(POST_URL + id, {
         headers: {
           Authorization: `Bearer ${token}`,
           "Content-Type": "multipart/form-data",
@@ -147,6 +145,27 @@ export const PostsProvider = ({ children }) => {
     onSuccess: async () => {
       queryClient.invalidateQueries({ queryKey: ["posts"] });
       queryClient.invalidateQueries({ queryKey: ["Replay"] });
+    },
+  });
+
+  const { mutate: likePost } = useMutation({
+    mutationFn: async (id ) => {
+      const res = await axios.post(POST_LIKE_URL + id, null, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      return res.data;
+    },
+    onSuccess: (updatedLikes, { postId }) => {
+      queryClient.setQueryData(["posts"], (old) =>
+        old?.map((p) => (p._id === postId ? { ...p, likes: updatedLikes } : p)),
+      );
+    },
+    onError: (err) => {
+      console.log(err);
+      return "Something went wrong"
+
     },
   });
 
@@ -162,6 +181,7 @@ export const PostsProvider = ({ children }) => {
         CreatePost,
         usePostsByUser,
         PostByID,
+        likePost,
       }}
     >
       {children}

@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { FiTrash2 } from "react-icons/fi";
 import { AiOutlineHeart, AiFillHeart } from "react-icons/ai";
-import { FaBookmark,FaRegBookmark } from "react-icons/fa";
-import {  } from "react-icons/fa";
+import { FaBookmark, FaRegBookmark } from "react-icons/fa";
+import {} from "react-icons/fa";
 import { BiRepost, BiMessageRounded } from "react-icons/bi";
 import { BsThreeDots } from "react-icons/bs";
 import { Link } from "react-router-dom";
@@ -30,15 +30,17 @@ export function PostImage({ posts }) {
 }
 export function PostProfile({ post }) {
   const { GetUserById } = useUser();
-  
+
   const { data: postUser = [] } = GetUserById(post?.postedBy);
 
   const BASE_URL = import.meta.env.VITE_BASE_URL + "profilesImage/";
-
+  const avatar = postUser?.profilePic
+    ? BASE_URL + postUser?.profilePic
+    : "/favicon.svg";
   return (
     <>
       <img
-        src={BASE_URL + postUser?.profilePic}
+        src={avatar}
         alt=""
         width={30}
         height={30}
@@ -61,18 +63,26 @@ export function PostProfile({ post }) {
 }
 
 export function ActionBtn({ posts }) {
+  const { likePost } = usePosts();
   const { user, AddBookmark } = useUser();
   const [RepostPopUp, setRepostPopUp] = useState(false);
+
+  const serverLiked = user.likedPosts.some(
+    (id) => id.toString() === posts?._id,
+  );
+
+  const [isLiked, setIsLiked] = useState(serverLiked);
+  const isBookmarked = user.bookmarks.some(
+    (id) => id.toString() === posts?._id,
+  );
+
   const onLike = (id) => {
-    console.log(id);
-    
+    setIsLiked((prev) => !prev);
+    likePost(id);
   };
   const onClickBookmark = (postId) => {
     AddBookmark({ userId: user._id, postId: postId });
   };
-  const isBookmarked = user.bookmarks.some(
-    (id) => id.toString() === posts?._id,
-  );
 
   function formatCount(n) {
     if (n >= 1000) return (n / 1000).toFixed(1).replace(".0", "") + "K";
@@ -116,17 +126,19 @@ export function ActionBtn({ posts }) {
       </button>
       <button
         onClick={() => onLike(posts?._id)}
-        className={`flex items-center group/btn transition-colors ${posts?.liked ? "text-pink-500" : "text-gray-500 hover:text-pink-500"}`}
+        className={`flex items-center group/btn transition-colors ${isLiked ? "text-pink-500" : "text-gray-500 hover:text-pink-500"}`}
       >
         <span className="p-1.5 rounded-full group-hover/btn:bg-pink-500/10 transition-colors">
-          {posts?.liked ? (
+          {isLiked ? (
             <AiFillHeart className="text-base" />
           ) : (
             <AiOutlineHeart className="text-base" />
           )}
         </span>
         <span className="">
-          {formatCount(posts?.likeCount + (posts?.liked ? 0 : 0))}
+          {formatCount(
+            posts?.likedBy.length + (isLiked ? 1 : 0) - (serverLiked ? 1 : 0),
+          )}
         </span>
       </button>
       <div className="ml-auto flex">
@@ -172,8 +184,7 @@ export default function Posts({ post }) {
     deletePost.mutateAsync(post?._id);
   };
   const profileAction = (value, id) => {
-    console.log(value,id);
-    
+    console.log(value, id);
   };
 
   return (
@@ -266,9 +277,7 @@ export default function Posts({ post }) {
                   <ul className="mt-2 rounded-lg ">
                     <li className="dropdown-item inline-flex ">
                       <button
-                        onClick={() =>
-                          profileAction("Unfollow", postUser?._id)
-                        }
+                        onClick={() => profileAction("Unfollow", postUser?._id)}
                         className="p-3 inline-flex hover:bg-slate-700 w-full font-bold"
                       >
                         <FiTrash2 className="mr-3 text-xl" /> Unfollow @
@@ -277,9 +286,7 @@ export default function Posts({ post }) {
                     </li>
                     <li className="dropdown-item">
                       <button
-                        onClick={() =>
-                          profileAction("Unfollow", postUser?._id)
-                        }
+                        onClick={() => profileAction("Unfollow", postUser?._id)}
                         className="p-3 inline-flex hover:bg-slate-700 w-full font-bold"
                       >
                         <FiTrash2 className="mr-3 text-xl" />

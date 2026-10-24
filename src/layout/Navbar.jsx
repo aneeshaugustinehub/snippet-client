@@ -5,7 +5,7 @@ import { BsChat, BsThreeDots } from "react-icons/bs";
 import { FaRegBookmark } from "react-icons/fa6";
 import { CiUser } from "react-icons/ci";
 import { CiCircleMore } from "react-icons/ci";
-import { CiAirportSign1 } from "react-icons/ci";
+import { IoMdAddCircleOutline } from "react-icons/io";
 import { IoLogoOctocat } from "react-icons/io5";
 import { Link } from "react-router-dom";
 // import { useEffect } from "react";
@@ -19,8 +19,9 @@ export default function NavBar() {
 
   const { logout, user } = useUser();
   const userdata = user;
-
-  const ProfileImage = BASE_URL + userdata?.profilePic;
+  const ProfileImage = user?.profilePic
+    ? BASE_URL + user?.profilePic
+    : "/favicon.svg";
   const [navMore, setNavMore] = useState(null);
   const [navAcc, setNavAcc] = useState(null);
   const [navPost, setNavPost] = useState(null);
@@ -66,7 +67,7 @@ export default function NavBar() {
               </li>
               <li className="nav-item">
                 <Link to="/Gork" className="nav-link ">
-                  <CiAirportSign1 /> <span className="nav-title">AI</span>
+                  <IoMdAddCircleOutline /> <span className="nav-title">AI</span>
                 </Link>
               </li>
               <li className="nav-item">
@@ -104,43 +105,43 @@ export default function NavBar() {
               <ul className=" bottom-24 left-0 right-0 m-auto px-2 rounded-lg">
                 <li className="dropdown-item">
                   <Link to="" className="box-link ">
-                    <CiAirportSign1 />
+                    <IoMdAddCircleOutline />
                     <span className="nav-title">Communities</span>
                   </Link>
                 </li>
                 <li className="dropdown-item">
                   <Link to="" className="box-link ">
-                    <CiAirportSign1 />
+                    <IoMdAddCircleOutline />
                     <span className="nav-title">list</span>
                   </Link>
                 </li>
                 <li className="dropdown-item">
                   <Link to="" className="box-link ">
-                    <CiAirportSign1 />
+                    <IoMdAddCircleOutline />
                     <span className="nav-title">Communities</span>
                   </Link>
                 </li>
                 <li className="dropdown-item">
                   <Link to="" className="box-link ">
-                    <CiAirportSign1 />
+                    <IoMdAddCircleOutline />
                     <span className="nav-title">Monetization</span>
                   </Link>
                 </li>
                 <li className="dropdown-item">
                   <Link to="" className="box-link">
-                    <CiAirportSign1 />
+                    <IoMdAddCircleOutline />
                     <span className="nav-title">Pro</span>
                   </Link>
                 </li>
                 <li className="dropdown-item">
                   <Link to="" className="box-link">
-                    <CiAirportSign1 />
+                    <IoMdAddCircleOutline />
                     <span className="nav-title">Ads</span>
                   </Link>
                 </li>
                 <li className="dropdown-item">
                   <Link to="" className="box-link ">
-                    <CiAirportSign1 />
+                    <IoMdAddCircleOutline />
                     <span className="nav-title">Settings and privacy</span>
                   </Link>
                 </li>
@@ -154,7 +155,7 @@ export default function NavBar() {
                 setNavPost(!navPost);
               }}
             >
-              <CiAirportSign1 className="rounded-full xl:hidden flex text-4xl  bg-gray-100 hover:bg-slate-200 text-gray-900" />
+              <IoMdAddCircleOutline className="rounded-full xl:hidden flex text-4xl  bg-gray-100 hover:bg-slate-200 text-gray-900" />
               <span className="color-btn rounded-full xl:py-3 xl:px-24 justify-center items-center xl:flex hidden font-black text-lg">
                 Post
               </span>

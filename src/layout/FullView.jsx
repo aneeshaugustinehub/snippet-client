@@ -1,7 +1,4 @@
-import Posts, {
-  ActionBtn,
-  PostImage,
-} from "../components/Posts";
+import Posts, { ActionBtn, PostImage } from "../components/Posts";
 import { useParams } from "react-router-dom";
 import { usePosts } from "../components/PostsContext";
 import Loading from "../components/Loading";
@@ -29,9 +26,10 @@ export default function FullView() {
   const { data: posts = [], isLoading, error } = PostByID(id);
   const { data: replay = [] } = useGetReplay(id);
   const { data: postUser = [] } = GetUserById(posts.postedBy);
-
+  const ProfileImage = user?.profilePic
+    ? BASE_URL + user?.profilePic
+    : "/favicon.svg";
   // console.log(replay,id,"post use and replay id");
-  
 
   const ImagePreviewHandle = (e) => {
     const file = e.target.files[0];
@@ -65,7 +63,7 @@ export default function FullView() {
         <div className="inline-flex text-xl font-bold fixed w-full">
           <Link
             className="bg-slate-800/70 custom-border rounded-full m-3 p-2"
-            onClick={()=>history.back()}
+            onClick={() => history.back()}
           >
             <GoArrowLeft />
           </Link>
@@ -93,7 +91,7 @@ export default function FullView() {
               <div className="custom-border my-2 inline-block">
                 <div className="flex justify-center p-2">
                   <img
-                    src={BASE_URL + postUser?.profilePic}
+                    src={ProfileImage}
                     alt=""
                     width={30}
                     height={30}
@@ -119,9 +117,7 @@ export default function FullView() {
                   {" "}
                   <Link to={`/comment/${posts._id}`}>
                     {/* posts text */}
-                    <p className="font-thin text-[15px]">
-                      {posts.description}
-                    </p>
+                    <p className="font-thin text-[15px]">{posts.description}</p>
                   </Link>
                 </div>
                 <p className="font-thin text-sm text-gray-500 my-3 px-2">
