@@ -4,7 +4,7 @@ import { FaRegSmile } from "react-icons/fa";
 import { useUser } from "./UserContext";
 import { usePosts } from "./PostsContext";
 
-export default function CreatePost({ onPostCreated }) {  
+export default function CreatePost({ onPostCreated }) {
   const BASE_URL = import.meta.env.VITE_BASE_URL + "profilesImage/";
 
   const { CreatePost } = usePosts();
@@ -12,7 +12,9 @@ export default function CreatePost({ onPostCreated }) {
   const [Description, setDescription] = useState("");
   const [PostImage, setPostImage] = useState();
   const [PostImagePreview, setPostImagePreview] = useState();
-  const ProfileImage = user?.profilePic;
+  const ProfileImage = user?.profilePic
+    ? BASE_URL + user?.profilePic
+    : "/favicon.svg";
   const PostImageRef = useRef();
   const PostImages = [];
 
@@ -26,7 +28,7 @@ export default function CreatePost({ onPostCreated }) {
 
   const PostHandle = async () => {
     if (!Description && !PostImage) return;
-    await CreatePost({Description,PostImage });
+    await CreatePost({ Description, PostImage });
     setDescription("");
     setPostImagePreview(null);
     onPostCreated?.();
@@ -36,7 +38,7 @@ export default function CreatePost({ onPostCreated }) {
     <div className="flex px-4 py-2  w-full h-full">
       <div className="shrink-0">
         <img
-          src={BASE_URL + ProfileImage}
+          src={ProfileImage}
           alt="img"
           className="rounded-full h-10 w-10 object-cover"
         />

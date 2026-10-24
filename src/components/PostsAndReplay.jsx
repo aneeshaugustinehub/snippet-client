@@ -17,7 +17,7 @@ export default function PostsAndReplay({ post, isBookmark }) {
   
   const handleDelete = () => {
     if (isBookmark) {
-      AddBookmark({ userId: user._id, postId: post._id });
+      AddBookmark({ userId: user.id, postId: post._id });
       deletePost.mutateAsync(post?._id);
     }else{
       deletePost.mutateAsync(post?._id);
@@ -43,7 +43,7 @@ export default function PostsAndReplay({ post, isBookmark }) {
                 closedby="any"
                 className={`color dark:bg-gray-900 bg-gray-200  m-auto rounded-lg flex`}
               >
-                {postUser?._id? (
+                {postUser?._id === user.id? (
                   <ul className="rounded-lg">
                     <li className="dropdown-item inline-flex ">
                       <button
