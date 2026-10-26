@@ -5,7 +5,7 @@ import { FaBookmark, FaRegBookmark } from "react-icons/fa";
 import {} from "react-icons/fa";
 import { BiRepost, BiMessageRounded } from "react-icons/bi";
 import { BsThreeDots } from "react-icons/bs";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import moment from "moment";
 import { usePosts } from "./PostsContext";
 import { useUser } from "./UserContext";
@@ -63,24 +63,30 @@ export function PostProfile({ post }) {
 }
 
 export function ActionBtn({ posts }) {
+  const navigate = useNavigate();
+
   const { likePost } = usePosts();
   const { user, AddBookmark } = useUser();
   const [RepostPopUp, setRepostPopUp] = useState(false);
 
-  const serverLiked = user.likedPosts.some(
+  const serverLiked = user?.likedPosts.some(
     (id) => id.toString() === posts?._id,
   );
-
   const [isLiked, setIsLiked] = useState(serverLiked);
-  const isBookmarked = user.bookmarks.some(
-    (id) => id.toString() === posts?._id,
-  );
-
   const onLike = (id) => {
+    if (!user) {
+      navigate("/login");
+    }
     setIsLiked((prev) => !prev);
     likePost(id);
   };
+  const isBookmarked = user?.bookmarks.some(
+    (id) => id.toString() === posts?._id,
+  );
   const onClickBookmark = (postId) => {
+    if (!user) {
+      navigate("/login");
+    }
     AddBookmark({ userId: user._id, postId: postId });
   };
 
