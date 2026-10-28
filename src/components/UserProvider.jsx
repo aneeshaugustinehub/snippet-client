@@ -57,7 +57,7 @@ export const UserProvider = ({ children }) => {
 
   const GetUserById = (id) => {
     // console.log(id);
-    
+
     return useQuery({
       queryKey: ["GetUserById", id],
       queryFn: async () => {
@@ -87,12 +87,13 @@ export const UserProvider = ({ children }) => {
 
     if (profilePic) formData.append("profilePic", profilePic);
     if (bannerPic) formData.append("bannerPic", bannerPic);
+    console.log(bannerPic, profilePic);
 
     try {
       await axios.put(USER_URL, formData, {
         headers: {
           Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
+          "Content-Type": "multipart/form-data",
         },
       });
     } catch (error) {
@@ -154,17 +155,42 @@ export const UserProvider = ({ children }) => {
   };
 
   const { mutate: AddBookmark } = useMutation({
-    mutationFn: async ({postId }) => {
-      await axios.put(USER_URL + "bookmark/",{ postId },{
-        headers:{
-          Authorization:`Bearer ${token}`,
-          "Content-Type": "application/json",
-        }
-      });
+    mutationFn: async ({ postId }) => {
+      await axios.put(
+        USER_URL + "bookmark/",
+        { postId },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        },
+      );
     },
     onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: ["user"],
+      });
+    },
+  });
+
+  const { mutate: onClickFollow } = useMutation({
+    mutationFn: async (Id) => {
+      await axios.put(
+        USER_URL + "follow/",
+        { Id },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        },
+      );
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["user"] });
+      queryClient.invalidateQueries({
+        queryKey: ["userByUsername"],
       });
     },
   });
@@ -184,6 +210,7 @@ export const UserProvider = ({ children }) => {
         AddBookmark,
         EditUserProfile,
         GetUserById,
+        onClickFollow,
         GetUserByUsername,
       }}
     >

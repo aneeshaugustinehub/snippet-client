@@ -23,13 +23,14 @@ export default function Profile() {
   //   }
   //   fetchUser(username);
   // }, [username, BASE_URL]);
-
+  
   const {
     data: userData = [],
     isLoading: userLoading,
     error: errorUser,
   } = GetUserByUsername(username);
-
+  
+  // console.log("userdata",userData,"user",user);
   const {
     data: postsByUser = [],
     isLoading: postLoading,
@@ -54,10 +55,10 @@ export default function Profile() {
     return (
       <div className="md:w-[580px] pt-20 flex justify-center">
         <div className="">
-        <h1 className="text-3xl font-black ">
-          This account doesn’t <br /> exist
-        </h1>
-        <p className="text-gray-600">Try searching for another.</p>
+          <h1 className="text-3xl font-black ">
+            This account doesn’t <br /> exist
+          </h1>
+          <p className="text-gray-600">Try searching for another.</p>
         </div>
       </div>
     );
@@ -100,7 +101,7 @@ export default function Profile() {
                       </button>
                     </Link>
                   ) : (
-                    <FollowButton />
+                    <FollowButton id = {userData._id}/>
                   )}
                 </div>
 
@@ -152,12 +153,16 @@ export default function Profile() {
                   {/* Following / Followers */}
                   <div className="flex gap-4 mt-2 text-sm text-black dark:text-white">
                     <span>
-                      <span className="font-bold">{userData?.noFollowing}</span>
-                      <span className="text-gray-500">Following</span>
+                      <span className="font-bold">
+                        {userData?.following?.length}
+                      </span>
+                      <span className="text-gray-500"> Following</span>
                     </span>
                     <span>
-                      <span className="font-bold">{userData?.noFollowers}</span>
-                      <span className="text-gray-500">Followers</span>
+                      <span className="font-bold">
+                        {userData?.followers?.length}
+                      </span>
+                      <span className="text-gray-500"> Followers</span>
                     </span>
                   </div>
                 </div>
@@ -173,9 +178,7 @@ export default function Profile() {
             )}
             {!postLoading &&
               !postError &&
-              postsByUser?.map((post) => (
-                <Posts key={post._id} post={post} />
-              ))}
+              postsByUser?.map((post) => <Posts key={post._id} post={post} />)}
           </div>
         </div>
       </div>

@@ -63,7 +63,7 @@ export default function EditProfile() {
     ) {
       return ("no data");
     }
-     const res =await EditUserProfile(
+     await EditUserProfile(
       user_id,
       fullname,
       bio,
@@ -73,7 +73,6 @@ export default function EditProfile() {
       ProfileImage,
       BannerImage,
     );
-    console.log(res);
     navigate(`/${user_id}`);
   };
   return (
