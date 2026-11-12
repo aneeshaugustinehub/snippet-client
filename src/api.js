@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const api = axios.create({
-  baseURL: '/',
+  VITE_BASE_URL: '/',
 });
 
 export const getUsers = () => api.get('/users').then(r => r.data);

@@ -2,6 +2,7 @@
 // import PublicRoute from "./components/PublicRoute";
 // import Error from "./components/error";
 import Todo from "./components/Todo";
+import Connect from "./components/Connect";
 import { Routes, Route } from "react-router-dom";
 import Profile from "./page/Profile";
 import EditProfile from "./page/EditProfile";
@@ -84,7 +85,7 @@ export default function App() {
               path="/notifications"
               element={
                 <ProtectedRoute>
-                  <Notifications />
+                  <Notifications/>
                 </ProtectedRoute>
               }
             />
@@ -92,12 +93,12 @@ export default function App() {
               path="/connect_people"
               element={
                 <ProtectedRoute>
-                  <Notifications />
+                  <Connect />
                 </ProtectedRoute>
               }
             />
             <Route
-              path="/Bookmarks"
+              path="/bookmarks"
               element={
                 <ProtectedRoute>
                   <PostsProvider>

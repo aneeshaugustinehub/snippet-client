@@ -41,7 +41,7 @@ export default function Connect() {
           ))}
         <Link
           className="text-sky-500 text-sm mt-2 hover:underline"
-          to="/explore"
+          to="/connect_people"
         >
           Show more
         </Link>

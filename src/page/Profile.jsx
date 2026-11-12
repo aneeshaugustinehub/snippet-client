@@ -8,6 +8,7 @@ import { useUser } from "../components/UserContext";
 import FollowButton from "../components/FollowButton";
 import { GoArrowLeft } from "react-icons/go";
 import Loading from "../components/Loading";
+import { useNavigate } from "react-router-dom";
 
 export default function Profile() {
   const { user, GetUserByUsername } = useUser();
@@ -15,6 +16,7 @@ export default function Profile() {
   // const [profile, setProfile] = useState();
   const { username } = useParams();
   const { usePostsByUser } = usePosts();
+  const navigate = useNavigate();
 
   // useEffect(() => {
   //   async function fetchUser(id) {
@@ -23,13 +25,13 @@ export default function Profile() {
   //   }
   //   fetchUser(username);
   // }, [username, BASE_URL]);
-  
+
   const {
     data: userData = [],
     isLoading: userLoading,
     error: errorUser,
   } = GetUserByUsername(username);
-  
+
   // console.log("userdata",userData,"user",user);
   const {
     data: postsByUser = [],
@@ -83,14 +85,34 @@ export default function Profile() {
             />
             {/* Profile info */}
             <div className="border-b border-gray-700 p-3">
-              <div className="flex flex-col">
+              <div className="flex flex-col ">
                 {/* Avatar + Edit button row */}
+
                 <div className="flex justify-between items-start">
                   <img
                     src={ProfileImage}
                     className="w-32 h-32 rounded-full border-4 border-white dark:border-black object-cover -mt-14 "
                     alt="profile"
                   />
+                  <div className="nav-link text-4xl">
+                    <button
+                      className="border dark:border-white border-black text-black dark:text-white text-sm font-bold px-4 py-1 rounded-full hover:bg-white hover:text-black transition"
+                      onClick={() =>
+                        navigate("/chat", {
+                          state: {
+                            user: {
+                              _id: user._id,
+                              userId: user.userId,
+                              name: user.name,
+                              profilePic: user.profilePic,
+                            },
+                          },
+                        })
+                      }
+                    >
+                      Message
+                    </button>
+                  </div>
                   {username === user?.userId ? (
                     <Link to="/EditProfile" className="nav-link text-4xl ">
                       <button
@@ -101,10 +123,9 @@ export default function Profile() {
                       </button>
                     </Link>
                   ) : (
-                    <FollowButton id = {userData._id}/>
+                    <FollowButton id={userData._id} />
                   )}
                 </div>
-
                 {/* Details */}
                 <div className="pt-3">
                   <h5 className="font-bold text-black dark:text-white text-lg m-0">

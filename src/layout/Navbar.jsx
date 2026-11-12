@@ -55,7 +55,7 @@ export default function NavBar() {
                 </Link>
               </li>
               <li className="nav-item">
-                <Link to="/Notifications" className="nav-link ">
+                <Link to="/notifications" className="nav-link ">
                   <MdNotificationsNone />
                   <span className="nav-title">Notifications</span>
                 </Link>
@@ -66,12 +66,12 @@ export default function NavBar() {
                 </Link>
               </li>
               <li className="nav-item">
-                <Link to="/Gork" className="nav-link ">
+                <Link to="/gork" className="nav-link ">
                   <IoMdAddCircleOutline /> <span className="nav-title">AI</span>
                 </Link>
               </li>
               <li className="nav-item">
-                <Link to="/Bookmarks" className="nav-link ">
+                <Link to="/bookmarks" className="nav-link ">
                   <FaRegBookmark />
                   <span className="nav-title">Bookmarks</span>
                 </Link>
