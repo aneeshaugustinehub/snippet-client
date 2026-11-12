@@ -94,25 +94,7 @@ export default function Profile() {
                     className="w-32 h-32 rounded-full border-4 border-white dark:border-black object-cover -mt-14 "
                     alt="profile"
                   />
-                  <div className="nav-link text-4xl">
-                    <button
-                      className="border dark:border-white border-black text-black dark:text-white text-sm font-bold px-4 py-1 rounded-full hover:bg-white hover:text-black transition"
-                      onClick={() =>
-                        navigate("/chat", {
-                          state: {
-                            user: {
-                              _id: user._id,
-                              userId: user.userId,
-                              name: user.name,
-                              profilePic: user.profilePic,
-                            },
-                          },
-                        })
-                      }
-                    >
-                      Message
-                    </button>
-                  </div>
+                  <div className="nav-link text-4xl"></div>
                   {username === user?.userId ? (
                     <Link to="/EditProfile" className="nav-link text-4xl ">
                       <button
@@ -123,7 +105,26 @@ export default function Profile() {
                       </button>
                     </Link>
                   ) : (
-                    <FollowButton id={userData._id} />
+                    <>
+                      <button
+                        className=" border dark:border-white border-black text-black dark:text-white text-sm font-bold px-4 py-1 rounded-full hover:bg-white hover:text-black transition"
+                        onClick={() =>
+                          navigate("/chat", {
+                            state: {
+                              user: {
+                                _id: userData._id,
+                                userId: userData.userId,
+                                name: userData.name,
+                                profilePic: userData.profilePic,
+                              },
+                            },
+                          })
+                        }
+                      >
+                        Message
+                      </button>
+                      <FollowButton id={userData._id} />
+                    </>
                   )}
                 </div>
                 {/* Details */}
