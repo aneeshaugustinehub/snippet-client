@@ -15,14 +15,14 @@ const authHeaders = () => ({
   Authorization: `Bearer ${localStorage.getItem("token")}`,
 });
 
-const avatarColors = [
-  "bg-blue-500",
-  "bg-purple-500",
-  "bg-green-500",
-  "bg-orange-500",
-  "bg-pink-500",
-  "bg-yellow-500",
-];
+// const avatarColors = [
+//   "bg-blue-500",
+//   "bg-purple-500",
+//   "bg-green-500",
+//   "bg-orange-500",
+//   "bg-pink-500",
+//   "bg-yellow-500",
+// ];
 
 const iconMap = {
   like: { Icon: AiOutlineHeart, color: "text-pink-500", bg: "bg-pink-500/10" },
@@ -73,17 +73,17 @@ function NotifItem({ n, onRead }) {
       onClick={() => !n.read && onRead(n._id)}
       className={`flex gap-3 px-4 py-3.5 border-b border-gray-800 cursor-pointer items-start ${!n.read ? "bg-sky-500/[0.03]" : ""}`}
     >
-      <div className="flex flex-col items-center gap-2 flex-shrink-0">
+      <div className="flex  items-center gap-2 flex-shrink-0">
         <div
           className={`w-9 h-9 rounded-full ${bg} flex items-center justify-center`}
         >
           <Icon className={`${color} text-lg`} />
         </div>
-        {user?.profileImg ? (
-          <img src={user.profileImg} className="w-10 h-10 rounded-full" />
+        {user?.profilePic ? (
+          <img src={BASE_URL+"profilesImage/"+user.profilePic} className="w-10 h-10 rounded-full" />
         ) : (
           <div className="w-10 h-10 rounded-full bg-blue-500 flex items-center justify-center font-semibold">
-            {user?.username?.[0]?.toUpperCase()}
+            {user?.userId?.[0]?.toUpperCase()}
           </div>
         )}
       </div>
